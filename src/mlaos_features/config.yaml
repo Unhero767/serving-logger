@@ -1,0 +1,62 @@
+# MLAOS Feature Extractor Configuration
+# Rule #32: Shared config for training and serving feature extraction
+# Version must match across all environments
+
+version: "1.0.0"
+
+normalization:
+  method: min_max  # Options: min_max, zscore
+  clip_outliers: true
+  outlier_std_threshold: 3.0
+
+features:
+  - name: resonance_score
+    type: continuous
+    source: resonance_raw
+    min: 0.0
+    max: 1.0
+    owner: kennydallmier@gmail.com
+    description: "Normalized resonance score from EIS sensor (0.0-1.0)"
+
+  - name: impedance_magnitude
+    type: continuous
+    source: impedance_raw
+    min: 0.0
+    max: 100.0
+    owner: kennydallmier@gmail.com
+    description: "Bioelectric impedance magnitude in ohms, normalized"
+
+  - name: chiaroscuro_index
+    type: continuous
+    synthetic: true
+    sources: [light_intensity, dark_intensity]
+    formula: "(light - dark) / (light + dark)"
+    owner: kennydallmier@gmail.com
+    description: "Synthetic feature: contrast ratio between light/dark intensity"
+
+  - name: hrv_score
+    type: continuous
+    source: hrv_score
+    owner: kennydallmier@gmail.com
+    description: "Heart rate variability score passthrough"
+
+  - name: memory_vector_mean
+    type: continuous
+    source: memory_vector
+    reduction: mean
+    owner: kennydallmier@gmail.com
+    description: "Mean of the memory node embedding vector"
+
+# Skew alert thresholds (Rule #37)
+skew_detection:
+  ks_test_threshold: 0.05
+  lookback_days: 7
+  alert_on_skew: true
+
+# Feature coverage requirements (Rule #11)
+coverage:
+  resonance_score: 0.99
+  impedance_magnitude: 0.95
+  chiaroscuro_index: 0.90
+  hrv_score: 0.85
+  memory_vector_mean: 0.99
