@@ -1,0 +1,94 @@
+# MLAOS Feature Configuration
+# Rule #11: Give feature columns owners and documentation
+# Rule #32: Same configuration for training and serving
+# Rule #37: Version tracked for skew detection
+
+# -----------------------------------------------------------------------
+# FeatureExtractor version (Rule #37: track for skew detection)
+# -----------------------------------------------------------------------
+extractor_version: "2.3"
+model_version: "AURELIA-v2.3"
+
+# -----------------------------------------------------------------------
+# Resonance Feature (Rule #17: directly observed)
+# -----------------------------------------------------------------------
+resonance_min: -1.0
+resonance_max: 1.0
+
+# -----------------------------------------------------------------------
+# Sigma7 Identity Vector (Rule #32: same for training and serving)
+# Cosine similarity baseline: sigma7 system identity alignment
+# -----------------------------------------------------------------------
+sigma7_vector:
+  - 0.5
+  - 0.5
+  - 0.5
+
+# -----------------------------------------------------------------------
+# Feature Registry (Rule #11: owners and documentation)
+# -----------------------------------------------------------------------
+features:
+  resonance_score:
+    feature_type: NUMERIC
+    status: ACTIVE
+    owner_email: kennydallmier@gmail.com
+    description: "Normalized resonance signal (0.0-1.0). Rule #17: directly observed."
+    expected_coverage_pct: 1.0
+
+  impedance_magnitude:
+    feature_type: NUMERIC
+    status: ACTIVE
+    owner_email: kennydallmier@gmail.com
+    description: "EIS impedance magnitude in Ohms. Rule #17: directly observed."
+    expected_coverage_pct: 1.0
+
+  hrv_score:
+    feature_type: NUMERIC
+    status: ACTIVE
+    owner_email: kennydallmier@gmail.com
+    description: "Heart rate variability score in ms. Rule #17: directly observed."
+    expected_coverage_pct: 1.0
+
+  chiaroscuro_index:
+    feature_type: NUMERIC
+    status: ACTIVE
+    owner_email: kennydallmier@gmail.com
+    description: "Synthetic: abs(light-dark)/(light+dark). Rule #20: combine features."
+    expected_coverage_pct: 0.95
+
+  sigma7_alignment:
+    feature_type: NUMERIC
+    status: ACTIVE
+    owner_email: kennydallmier@gmail.com
+    description: "Cosine similarity: sigma7 identity vs memory vector. Rule #32."
+    expected_coverage_pct: 0.90
+
+  light_intensity:
+    feature_type: NUMERIC
+    status: ACTIVE
+    owner_email: kennydallmier@gmail.com
+    description: "Raw light intensity sensor reading. Rule #17: directly observed."
+    expected_coverage_pct: 1.0
+
+  dark_intensity:
+    feature_type: NUMERIC
+    status: ACTIVE
+    owner_email: kennydallmier@gmail.com
+    description: "Raw dark intensity sensor reading. Rule #17: directly observed."
+    expected_coverage_pct: 1.0
+
+# -----------------------------------------------------------------------
+# Skew Detection Thresholds (Rule #37)
+# -----------------------------------------------------------------------
+skew_audit:
+  ks_threshold: 0.1
+  pvalue_threshold: 0.05
+  lookback_days: 7
+  alert_email: kennydallmier@gmail.com
+
+# -----------------------------------------------------------------------
+# Pruning Automation (Rule #22)
+# -----------------------------------------------------------------------
+pruning:
+  unused_threshold_days: 30
+  dry_run_default: true
